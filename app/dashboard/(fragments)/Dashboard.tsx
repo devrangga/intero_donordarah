@@ -1,9 +1,7 @@
 import { FetchData } from "@/app/api/animeTest";
-import Cell from "@/components/Cell";
+import DashboardCell from "@/components/DashboardCell";
 import Dropdown from "@/components/Dropdown";
 import SearchBar from "@/components/SearchBar";
-import { Ambulance } from "@/public";
-import Image from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
 
 const Dashboard = () => {
@@ -28,7 +26,7 @@ const Dashboard = () => {
       item.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setDatas(filteredData);
-    setCurrentPage(1); // Reset to the first page on search
+    setCurrentPage(1);
   }, [searchQuery, allData]);
 
   const displayedItems = datas.slice(
@@ -50,7 +48,11 @@ const Dashboard = () => {
     <main>
       <div className="mt-8 flex flex-col gap-4">
         <div className="grid grid-cols-[4fr,1fr] w-full gap-16">
-          <SearchBar setSearchQuery={setSearchQuery} /> <Dropdown />
+          <SearchBar
+            setSearchQuery={setSearchQuery}
+            label={"Cari Golongan Darah"}
+          />{" "}
+          <Dropdown />
         </div>
 
         {allData.length < 1 ? (
@@ -66,7 +68,7 @@ const Dashboard = () => {
             </div>
 
             {displayedItems.map((item, index) => (
-              <Cell
+              <DashboardCell
                 date={item?.aired?.prop?.to?.year}
                 stocks={item?.favorites}
                 title={item?.title}

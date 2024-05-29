@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 
-const SearchBar = ({ setSearchQuery }) => {
+const SearchBar = ({ setSearchQuery, label }) => {
   const [isFocus, setIsFocus] = useState(false);
 
   const handleInputChange = (e) => {
@@ -16,7 +16,7 @@ const SearchBar = ({ setSearchQuery }) => {
     >
       <i className="ri-search-2-line text-3xl"></i>
       <input
-        placeholder="Cari Golongan Darah"
+        placeholder={label}
         className="text-gray-500 text-xl outline-none w-full h-full"
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
