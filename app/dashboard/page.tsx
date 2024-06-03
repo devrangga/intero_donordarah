@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import Sidebar from "./(fragments)/Sidebar";
 import Dashboard from "./(fragments)/Dashboard";
 import KelolaKadar from "./(fragments)/KelolaKadar";
@@ -9,6 +9,8 @@ import Navbar from "./(fragments)/Navbar";
 
 const page = () => {
   const [activeSection, setActiveSection] = useState<string>("dashboard");
+
+
 
   const renderContent = () => {
     switch (activeSection) {
