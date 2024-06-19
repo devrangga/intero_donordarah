@@ -1,14 +1,22 @@
+// components/Input.tsx
 "use client";
-import { Register } from "@/constant";
 import React, { useState } from "react";
 import "remixicon/fonts/remixicon.css";
+import { Register } from "@/constant";
 
-const Input: React.FC<Register> = ({
+interface InputProps extends Register {
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+const Input: React.FC<InputProps> = ({
   title,
   placeholder,
   logo,
   isPassword,
   name,
+  value,
+  onChange,
 }) => {
   const [isFocus, setIsFocus] = useState<boolean>(false);
   const [isHidden, setIsHidden] = useState<boolean>(isPassword);
@@ -27,9 +35,11 @@ const Input: React.FC<Register> = ({
             name={name}
             type={isHidden ? "password" : "text"}
             placeholder={placeholder}
-            className="placeholder:text-gray-400 bg-transparent text-lg w-full h-full outline-none text-primary"
+            className="bg-transparent text-lg w-full h-full outline-none text-primary"
             onFocus={() => setIsFocus(true)}
             onBlur={() => setIsFocus(false)}
+            value={value}
+            onChange={onChange}
           />
         </div>
         {isPassword && (

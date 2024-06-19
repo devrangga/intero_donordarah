@@ -1,29 +1,43 @@
-import { FetchData } from "@/app/api/animeTest";
 import KelolaKadarCell from "@/components/KelolaKadarCell";
 import TambahPendonorButton from "@/components/TambahPendonorButton";
 import SearchBar from "@/components/SearchBar";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const KelolaKadar = () => {
   const [datas, setDatas] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [allData, setAllData] = useState([]);
+  const { token } = useAuth();
 
   const itemsPerPage = 8;
 
-  const fetchData = useCallback(async () => {
-    const res = await FetchData();
-    setAllData(res);
-  }, []);
+  async function getPendonor() {
+    const response = await fetch("/api/donor", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data);
+    return result.data;
+  }
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await getPendonor();
+      setAllData(res);
+    };
     fetchData();
-  }, [fetchData]);
+  }, [token]);
 
   useEffect(() => {
     const filteredData = allData.filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      item.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setDatas(filteredData);
     setCurrentPage(1);
@@ -48,7 +62,7 @@ const KelolaKadar = () => {
     <main>
       <div className="mt-8 flex flex-col gap-4">
         <div className="grid grid-cols-[4fr,1fr] w-full gap-16">
-          <SearchBar setSearchQuery={setSearchQuery} label={"Cari Pendonor"} />{" "}
+          <SearchBar setSearchQuery={setSearchQuery} label={"Cari Pendonor"} />
           <TambahPendonorButton />
         </div>
 
@@ -69,28 +83,39 @@ const KelolaKadar = () => {
 
             {displayedItems.map((item, index) => (
               <KelolaKadarCell
-                date={item?.aired?.prop?.to?.year}
-                stocks={item?.favorites}
-                title={item?.title}
-                key={index}
+                namaPendonor={item.name}
+                jenisKelamin={item.gender}
+                golonganDarah={item.blood_type}
+                rhesus={item.rhesus_type}
+                nomorHp={item.phone_number}
+                alamat={item.address}
                 isOdd={index % 2 !== 0}
+                key={index}
               />
             ))}
           </div>
         )}
 
-        <div className="flex flex-row gap-4 ml-auto ">
+        <div className="flex flex-row gap-4 ml-auto">
           <button
             onClick={handlePrevious}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-white border-2 rounded-xl overflow-hidden border-gray-100 text-gray-400"
+            className={`px-4 py-2 border-2 rounded-xl overflow-hidden border-gray-100 ${
+              currentPage === 1
+                ? "bg-white text-gray-400"
+                : "bg-gray-500 text-white "
+            }`}
           >
             Previous
           </button>
           <button
             onClick={handleNext}
             disabled={currentPage * itemsPerPage >= datas.length}
-            className="px-4 py-2 bg-white border-2 rounded-xl overflow-hidden border-gray-100 text-gray-400"
+            className={`px-4 py-2 border-2 rounded-xl overflow-hidden border-gray-100 ${
+              currentPage * itemsPerPage >= datas.length
+                ? "bg-white text-gray-400 "
+                : "bg-gray-500 text-white "
+            }`}
           >
             Next
           </button>

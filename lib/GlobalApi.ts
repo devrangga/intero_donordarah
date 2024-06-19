@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function getHealthFacilities() {
   try {
     const data = await prisma.healthFacility.findMany();
-    return NextResponse.json(data);
+    return NextResponse.json(data,{status:200});
   } catch (error) {
     return NextResponse.error();
   }

@@ -7,35 +7,42 @@ export interface Register {
 }
 
 export const register: Register[] = [
-    {
-        title: "Nama Faskes",
-        placeholder: "Masukkan Nama Faskes",
-        name: "faskes",
-        logo: "nurse",
-        isPassword : false
-    },
-    {
-        title: "Username",
-        placeholder: "Masukkan Username",
-        name: "username",
-        logo: "user",
-        isPassword : false
-    },
-    {
-        title: "Nomor Telfon",
-        placeholder: "Masukkan Nama Faskes",
-        name: "phone",
-        logo: "phone",
-        isPassword : false
-    },
-    {
-        title: "Password",
-        placeholder: "Masukkan Password",
-        name: "password",
-        logo: "lock",
-        isPassword : true
-    },
-]
+  {
+    title: "Name",
+    placeholder: "Masukkan Nama Faskes",
+    name: "name",
+    logo: "nurse",
+    isPassword: false,
+  },
+  {
+    title: "Address",
+    placeholder: "Masukkan Username",
+    name: "address",
+    logo: "user",
+    isPassword: false,
+  },
+  {
+    title: "Phone Number",
+    placeholder: "Masukkan Nama Faskes",
+    name: "phone_number",
+    logo: "phone",
+    isPassword: false,
+  },
+  {
+    title: "Email",
+    placeholder: "Masukkan Nama Faskes",
+    name: "email",
+    logo: "phone",
+    isPassword: false,
+  },
+  {
+    title: "Password",
+    placeholder: "Masukkan Password",
+    name: "password",
+    logo: "lock",
+    isPassword: true,
+  },
+];
 
 export interface Login {
   title: string;
@@ -46,46 +53,46 @@ export interface Login {
 }
 
 export const login: Login[] = [
-    {
-        title: "Username",
-        placeholder: "Masukkan Username",
-        name: "username",
-        logo: "user",
-        isPassword : false
-    },
-    {
-        title: "Password",
-        placeholder: "Masukkan Password",
-        name: "password",
-        logo: "lock",
-        isPassword : true
-    },
-]
+  {
+    title: "Email",
+    placeholder: "Masukkan Email",
+    name: "email",
+    logo: "user",
+    isPassword: false,
+  },
+  {
+    title: "Password",
+    placeholder: "Masukkan Password",
+    name: "password",
+    logo: "lock",
+    isPassword: true,
+  },
+];
 
 export interface Sidebar {
-  name: "dashboard" | "kelolakadar" | "permintaankadar" | "profile";
+  name: "Dashboard" | "Kelola Kadar" | "Permintaan Kadar" | "Profile";
   label: string;
   icon: "dashboard" | "medicine-bottle" | "hand-heart" | "user";
 }
 
 export const sidebar: Sidebar[] = [
   {
-    name: "dashboard",
+    name: "Dashboard",
     label: "Dashboard",
     icon: "dashboard",
   },
   {
-    name: "kelolakadar",
+    name: "Kelola Kadar",
     label: "Kelola Kadar",
     icon: "medicine-bottle",
   },
   {
-    name: "permintaankadar",
+    name: "Permintaan Kadar",
     label: "Permintaan Kadar",
     icon: "hand-heart",
   },
   {
-    name: "profile",
+    name: "Profile",
     label: "Profile",
     icon: "user",
   },

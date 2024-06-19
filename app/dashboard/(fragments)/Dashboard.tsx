@@ -2,6 +2,7 @@ import { FetchData } from "@/app/api/animeTest";
 import DashboardCell from "@/components/DashboardCell";
 import Dropdown from "@/components/Dropdown";
 import SearchBar from "@/components/SearchBar";
+import { useAuth } from "@/context/AuthContext";
 import React, { useEffect, useState, useCallback } from "react";
 
 const Dashboard = () => {
@@ -9,6 +10,7 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [allData, setAllData] = useState([]);
+  const { token } = useAuth();
 
   const itemsPerPage = 8;
 
@@ -17,9 +19,235 @@ const Dashboard = () => {
     setAllData(res);
   }, []);
 
+
+  async function getPendonorById(id: string) {
+    const response = await fetch(`/api/donor/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data[0]);
+    return result;
+  }
+
+  async function addPendonor() {
+    const response = await fetch("/api/donor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result);
+    return result;
+  }
+
+  async function getStokDarah() {
+    const response = await fetch("/api/stok-darah", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data);
+    return result;
+  }
+
+  async function getFaskesById(id: string) {
+    const response = await fetch(`/api/faskes/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data.data);
+    return result;
+  }
+
+  async function getStokDarahById(id: string) {
+    const response = await fetch(`/api/stok-darah/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data[0]);
+    return result;
+  }
+
+  
+
+  async function getStokDarahFaskes() {
+    const response = await fetch("/api/stok-darah/faskes", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data);
+    return result;
+  }
+
+  async function getRiwayatPakai() {
+    const response = await fetch("/api/riwayat-pakai", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data);
+    return result;
+  }
+
+  async function getAllFaskes() {
+    const response = await fetch("/api/all-faskes", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    console.log(result.data.data);
+    return result;
+  }
+
+
+
+  async function pakaiStok() {
+    try {
+      const response = await fetch(`/api/pakai-stok`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        // body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to post data");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  const [formDataGetDarah, setFormDataGetDarah] = useState({
+    responder_hf_id: "",
+    responder_donor_id: "",
+    quantity: "",
+    purpose: "",
+  });
+
+  const handleChangeGetDarah = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormDataGetDarah((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitGetDarah = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await getDarah(formData);
+      console.log(response);
+    } catch (error) {
+      console.error("Error posting data:", error);
+    }
+  };
+
+  async function getDarah(formData?: any) {
+    try {
+      const response = await fetch(`/api/minta-darah`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        // body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to post data");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      return result;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  async function updateFaskes() {
+    try {
+      const response = await fetch(`/api/faskes`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        // body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to post data");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      return result;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+    // getStokDarahById("2");
+    // getStokDarah();
+    // getStokDarahFaskes();
+    // getRiwayatPakai();
+    // pakaiStok();
+    // acceptDarahById("25");
+    // rejectDarahById("30");
+    // getFaskesById("6");
+    getAllFaskes();
+    // getFaskes();
+    // updateFaskes();
+    // addPendonor();
+    // getPendonorById("2");
+    // getPendonor();
+    // getDarah();
+  }, []);
 
   useEffect(() => {
     const filteredData = allData.filter((item) =>

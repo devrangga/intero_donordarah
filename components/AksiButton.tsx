@@ -11,7 +11,7 @@ const AksiButton = ({ label, handleClick }) => {
   };
   return (
     <button
-      onClick={() => handleClick((prev) => !prev)}
+      onClick={handleClick}
       className={`px-4 py-2 ${buttonType()} text-white text-center font-bold rounded-[8px] overflow-hidden`}
     >
       {label}

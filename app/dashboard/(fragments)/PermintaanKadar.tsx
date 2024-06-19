@@ -1,8 +1,8 @@
-import { FetchData } from "@/app/api/animeTest";
 import SearchBar from "@/components/SearchBar";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import PermintaanDarahCell from "@/components/PermintaanDarahCell";
 import Penolakan from "@/components/Penolakan";
+import { useAuth } from "@/context/AuthContext";
 
 const PermintaanKadar = () => {
   const [datas, setDatas] = useState([]);
@@ -10,21 +10,83 @@ const PermintaanKadar = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [allData, setAllData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const { token } = useAuth();
 
   const itemsPerPage = 6;
 
-  const fetchData = useCallback(async () => {
-    const res = await FetchData();
-    setAllData(res);
-  }, []);
+  async function getAllRequests() {
+    const response = await fetch("/api/minta-darah", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await response.json();
+    return result.data.data;
+  }
+
+  async function acceptDarahById(id) {
+    try {
+      const response = await fetch(`/api/terima-darah/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("Accept result:", result.data);
+      return result;
+    } catch (error) {
+      console.error("Failed to accept darah:", error);
+      return null;
+    }
+  }
+
+  async function rejectDarahById(id) {
+    try {
+      const response = await fetch(`/api/tolak-darah/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("Reject result:", result.data);
+      return result;
+    } catch (error) {
+      console.error("Failed to reject darah:", error);
+      return null;
+    }
+  }
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await getAllRequests();
+      setAllData(res);
+    };
     fetchData();
-  }, [fetchData]);
+  }, [token]);
 
   useEffect(() => {
     const filteredData = allData.filter((item) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+      item.requester_hf_id
+        .toString()
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
     );
     setDatas(filteredData);
     setCurrentPage(1);
@@ -45,11 +107,28 @@ const PermintaanKadar = () => {
     }
   };
 
+  const handleStatusChange = async (id, action) => {
+    let result;
+    if (action === "Terima") {
+      result = await acceptDarahById(id);
+    } else {
+      result = await rejectDarahById(id);
+    }
+
+    if (result && result.data) {
+      setAllData((prevData) =>
+        prevData.map((item) =>
+          item.id === id ? { ...item, status: action.toLowerCase() } : item
+        )
+      );
+    }
+  };
+
   return (
     <main className="relative">
       <div className="mt-8 flex flex-col gap-4">
         <div className="w-full">
-          <SearchBar setSearchQuery={setSearchQuery} label={"Cari Faskes"} />{" "}
+          <SearchBar setSearchQuery={setSearchQuery} label={"Cari Faskes"} />
         </div>
 
         {allData.length < 1 ? (
@@ -58,23 +137,26 @@ const PermintaanKadar = () => {
           </h1>
         ) : (
           <div className="w-full rounded-2xl overflow-hidden">
-            <div className="overflow-hidden bg-gray-300 w-full grid grid-cols-[1.5fr,1.5fr,1.5fr,1.5fr,1.5fr,2fr] px-8 py-6 text-primary font-bold">
-              <h1 className="text-start">Nama Faskes</h1>
-              <h1 className="text-start">Asal Faskes</h1>
-              <h1 className="text-start">Golongan Darah</h1>
-              <h1 className="text-start">Rhesus Type</h1>
+            <div className="overflow-hidden bg-gray-300 w-full grid grid-cols-[1fr,1.5fr,1.5fr,1.5fr,1.5fr,1.5fr] px-8 py-6 text-primary font-bold">
+              <h1 className="text-start">Id</h1>
+              <h1 className="text-start">Id Peminta</h1>
+              <h1 className="text-start">Id Donor</h1>
+              <h1 className="text-start">Tujuan</h1>
+              <h1 className="text-start">Kuantitas</h1>
               <h1 className="text-start">Alamat</h1>
-              <h1 className="text-start">Aksi</h1>
             </div>
 
             {displayedItems.map((item, index) => (
               <PermintaanDarahCell
-                date={item?.aired?.prop?.to?.year}
-                stocks={item?.favorites}
-                title={item?.title}
                 key={index}
+                id={item.id}
+                idPeminta={item.requester_hf_id}
+                idDonor={item.responder_donor_id}
+                kuantitas={item.quantity}
+                tujuan={item.purpose}
+                status={item.status}
+                handleClick={handleStatusChange}
                 isOdd={index % 2 !== 0}
-                handleClick={setShowModal}
               />
             ))}
           </div>
